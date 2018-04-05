@@ -10,6 +10,7 @@ DEFAULT_ADDRESS = '48 rue rené clair paris'  # Deepki HQ
 google_api_key = 'AIzaSyDV0CBU7zCJD5GZkwHMb2ww8nZt2AbgERs'  # Please use you own API key
 google_places_url = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?key={api_key}&location={lat},{lon}&radius={distance}&type={type}'
 google_geocofing_url = 'https://maps.googleapis.com/maps/api/geocode/json?address={address}&key={api_key}'
+google_directions_url = 'https://maps.googleapis.com/maps/api/directions/json?origin={origin}&destination={destination}&mode=walking&key={api_key}'
 
 
 def main():
@@ -40,8 +41,10 @@ def main():
 
     if len(venues) > 0:
         selected = random.choice(venues)
-        print selected.get('name') + ' ({})'.format(selected.get('rating'))
+        distance, duration = getDistanceDuration(address, selected.get('vicinity'))
+        print '{} ({})'.format(selected.get('name'), selected.get('rating'))
         print selected.get('vicinity')
+        print '{} - {}'.format(distance, duration)
         if extra:
             print 'chosen between {} possibles venues'.format(possible_venues)
     else:
@@ -83,6 +86,23 @@ def getLatLon(address):
     lon = location.get('lng')
 
     return lat, lon
+
+
+def getDistanceDuration(origin, destination):
+    url = google_directions_url.format(
+        origin=origin,
+        destination=destination,
+        api_key=google_api_key
+    )
+    req = requests.get(url)
+    res = json.loads(req.text)
+
+    data = res["routes"][0]["legs"][0]
+
+    distance = data['distance']['text']
+    duration = data['duration']['text']
+
+    return distance, duration
 
 
 if __name__ == '__main__':
