@@ -42,9 +42,10 @@ def main():
     if len(venues) > 0:
         selected = random.choice(venues)
         distance, duration = getDistanceDuration(address, selected.get('vicinity'))
+        pas = getPas(distance)
         print '{} ({})'.format(selected.get('name'), selected.get('rating'))
         print selected.get('vicinity')
-        print '{} - {}'.format(distance, duration)
+        print '{} - {} - {} pas'.format(distance, duration, pas)
         if extra:
             print 'chosen between {} possibles venues'.format(possible_venues)
     else:
@@ -104,6 +105,9 @@ def getDistanceDuration(origin, destination):
 
     return distance, duration
 
+
+def getPas(distance):
+    return int(float(distance.replace('km', '')) * 1.75 * 1000)
 
 if __name__ == '__main__':
     main()
