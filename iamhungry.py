@@ -1,11 +1,12 @@
-# coding: utf-8
 import json
 import random
 import sys
-
 import requests
 
-DEFAULT_ADDRESS = '48 rue rené clair paris'  # Deepki HQ
+reload(sys)
+sys.setdefaultencoding('utf8')
+
+DEFAULT_ADDRESS = '54 Rue Greneta Paris'
 
 google_api_key = 'AIzaSyDV0CBU7zCJD5GZkwHMb2ww8nZt2AbgERs'  # Please use you own API key
 google_places_url = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?key={api_key}&location={lat},{lon}&radius={distance}&type={type}'
@@ -65,7 +66,7 @@ def getPlaces(lat, lon, place_type, distance):
         distance=distance
     )
     req = requests.get(url)
-    res = json.loads(req.text)
+    res = req.json()
 
     return res.get('results')
 
@@ -80,7 +81,7 @@ def getLatLon(address):
         api_key=google_api_key
     )
     req = requests.get(url)
-    res = json.loads(req.text)
+    res = req.json()
 
     location = res.get('results')[0].get('geometry').get('location')
     lat = location.get('lat')
@@ -96,7 +97,7 @@ def getDistanceDuration(origin, destination):
         api_key=google_api_key
     )
     req = requests.get(url)
-    res = json.loads(req.text)
+    res = req.json()
 
     data = res["routes"][0]["legs"][0]
 
@@ -108,6 +109,7 @@ def getDistanceDuration(origin, destination):
 
 def getPas(distance):
     return int(float(distance.replace('km', '')) * 1.75 * 1000)
+
 
 if __name__ == '__main__':
     main()
